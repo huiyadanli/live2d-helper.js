@@ -21,7 +21,7 @@ function Live2DHelper(setting)
     this.isDrawStart = false;
     
     this.gl = null;
-    this.canvas = null;
+    this.canvas = document.getElementById(defaultSetting.canvas);;
     
     this.dragMgr = null; /*new L2DTargetPoint();*/ 
     this.viewMatrix = null; /*new L2DViewMatrix();*/
@@ -29,22 +29,23 @@ function Live2DHelper(setting)
     this.deviceToScreen = null; /*new L2DMatrix44();*/
     
     this.drag = false; 
-    this.oldLen = 0;    
+    this.oldLen = 0;
     
     this.lastMouseX = 0;
     this.lastMouseY = 0;
     
     this.isModelShown = false;
     
+    var live2dRef = this;
     
-    initL2dCanvas(defaultSetting.canvas);
+    //initL2dCanvas(defaultSetting.canvas);
     
     
-    init();
+    //init();
 }
 
 
-function initL2dCanvas(canvasId)
+Live2DHelper.prototype.initL2dCanvas = function(canvasId)
 {
     
     this.canvas = document.getElementById(canvasId);
@@ -74,8 +75,21 @@ function initL2dCanvas(canvasId)
     });
 }
 
+function getWebGLContext(canvas)
+{
+    var NAMES = [ "webgl" , "experimental-webgl" , "webkit-3d" , "moz-webgl"];
 
-function init()
+    for( var i = 0; i < NAMES.length; i++ ){
+        try{
+            var ctx = canvas.getContext(NAMES[i], {premultipliedAlpha : true});
+            if(ctx) return ctx;
+        }
+        catch(e){}
+    }
+    return null;
+}
+
+Live2DHelper.prototype.init = function()
 {    
     
     var width = this.canvas.width;
@@ -114,7 +128,7 @@ function init()
     
     
     
-    this.gl = getWebGLContext();
+    this.gl = getWebGLContext(this.canvas);
     if (!this.gl) {
         l2dError("Failed to create WebGL context.");
         return;
@@ -125,17 +139,17 @@ function init()
     
     this.gl.clearColor(0.0, 0.0, 0.0, 0.0);
 
-    changeModel();
+    //changeModel();
     
-    startDraw();
+    live2dStartDraw(this);
 }
 
 
-function startDraw() {
-    if(!this.isDrawStart) {
-        this.isDrawStart = true;
+function live2dStartDraw(helper) {
+    if(!helper.isDrawStart) {
+        helper.isDrawStart = true;
         (function tick() {
-                draw(); 
+                live2dDraw(helper); 
 
                 var requestAnimationFrame = 
                     window.requestAnimationFrame || 
@@ -150,36 +164,36 @@ function startDraw() {
 }
 
 
-function draw()
+function live2dDraw(helper)
 {
     // l2dLog("--> draw()");
 
     MatrixStack.reset();
     MatrixStack.loadIdentity();
     
-    this.dragMgr.update(); 
-    this.live2DMgr.setDrag(this.dragMgr.getX(), this.dragMgr.getY());
+    helper.dragMgr.update(); 
+    helper.live2DMgr.setDrag(helper.dragMgr.getX(), helper.dragMgr.getY());
     
     
-    this.gl.clear(this.gl.COLOR_BUFFER_BIT);
+    helper.gl.clear(helper.gl.COLOR_BUFFER_BIT);
     
-    MatrixStack.multMatrix(projMatrix.getArray());
-    MatrixStack.multMatrix(viewMatrix.getArray());
+    MatrixStack.multMatrix(helper.projMatrix.getArray());
+    MatrixStack.multMatrix(helper.viewMatrix.getArray());
     MatrixStack.push();
     
-    for (var i = 0; i < this.live2DMgr.numModels(); i++)
+    for (var i = 0; i < helper.live2DMgr.numModels(); i++)
     {
-        var model = this.live2DMgr.getModel(i);
+        var model = helper.live2DMgr.getModel(i);
 
         if(model == null) return;
         
         if (model.initialized && !model.updating)
         {
             model.update();
-            model.draw(this.gl);
+            model.draw(helper.gl);
             
-            if (!this.isModelShown && i == this.live2DMgr.numModels()-1) {
-                this.isModelShown = !this.isModelShown;
+            if (!helper.isModelShown && i == helper.live2DMgr.numModels()-1) {
+                helper.isModelShown = !helper.isModelShown;
                 var btnChange = document.getElementById("btnChange");
                 btnChange.textContent = "Change Model";
                 btnChange.removeAttribute("disabled");
@@ -401,22 +415,10 @@ function transformScreenY(deviceY)
 
 
 
-function getWebGLContext()
-{
-    var NAMES = [ "webgl" , "experimental-webgl" , "webkit-3d" , "moz-webgl"];
-
-    for( var i = 0; i < NAMES.length; i++ ){
-        try{
-            var ctx = this.canvas.getContext(NAMES[i], {premultipliedAlpha : true});
-            if(ctx) return ctx;
-        }
-        catch(e){}
-    }
-    return null;
-};
 
 
 
+//---------------------------------------------------------------------------
 function l2dLog(msg) {
     if(!LAppDefine.DEBUG_LOG) return;
     
@@ -435,4 +437,11 @@ function l2dError(msg)
     l2dLog( "<span style='color:red'>" + msg + "</span>");
     
     console.error(msg);
-};
+}
+//---------------------------------------------------------------------------
+
+
+
+Live2DHelper.prototype.loadModel  = function(modelPath) {
+	this.live2DMgr.loadModel(this.gl, modelPath);
+}
