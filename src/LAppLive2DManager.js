@@ -1,16 +1,14 @@
-function LAppLive2DManager()
+function LAppLive2DManager(canvas)
 {
     // console.log("--> LAppLive2DManager()");
     
     
     this.models = [];  
     
-    
-    this.count = -1;
     this.reloadFlg = false; 
     
     Live2D.init();
-    Live2DFramework.setPlatformManager(new PlatformManager);
+    Live2DFramework.setPlatformManager(new PlatformManager(canvas));
     
 }
 
@@ -25,7 +23,7 @@ LAppLive2DManager.prototype.createModel = function()
 }
 
 
-LAppLive2DManager.prototype.changeModel = function(gl)
+LAppLive2DManager.prototype.changeModel = function(gl, newModelPath)
 {
     // console.log("--> LAppLive2DManager.update(gl)");
     
@@ -33,7 +31,9 @@ LAppLive2DManager.prototype.changeModel = function(gl)
     {
         
         this.reloadFlg = false;
-        var no = parseInt(this.count % 5);
+        this.releaseModel(gl, 0);
+        this.createModel().load(gl, newModelPath);
+        /*var no = parseInt(this.count % 5);
 
         var thisRef = this;
         switch (no)
@@ -75,13 +75,13 @@ LAppLive2DManager.prototype.changeModel = function(gl)
                 break;
             default:
                 break;
-        }
+        }*/
     }
 };
 
-LAppLive2DManager.prototype.loadModel = function(gl, modelPath)
+LAppLive2DManager.prototype.loadModel = function(gl, modelPath, callback)
 {
-    this.createModel().load(gl, modelPath);
+    this.createModel().load(gl, modelPath, callback);
 };
 
 
@@ -96,7 +96,7 @@ LAppLive2DManager.prototype.getModel = function(no)
 
 
 
-LAppLive2DManager.prototype.releaseModel = function(no, gl)
+LAppLive2DManager.prototype.releaseModel = function(gl, no)
 {
     // console.log("--> LAppLive2DManager.releaseModel(" + no + ")");
     

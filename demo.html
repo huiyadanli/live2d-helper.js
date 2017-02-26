@@ -37,7 +37,11 @@
     <body>
         
         <p>
-            <button id="btnChange" class="active">Change Model</button>
+            <button id="btnLoad">Load Model</button>
+
+            <button id="btnChange">Change Model</button>
+
+            <button id="btnRelease">Release Model</button>
         </p>
         
         <div>
@@ -63,12 +67,26 @@
 
         <!-- User's Script -->
         <script type="text/javascript">
+            var live2DHelper = new Live2DHelper({canvas: 'glcanvas'});
+
             window.onload = function() {
-                // Live2DHelper({canvas: 'glcanvas'})
-                var live2DHelper = new Live2DHelper({canvas: 'glcanvas'});
-                //live2DHelper.initL2dCanvas("glcanvas");
-                live2DHelper.init();
-                live2DHelper.loadModel(LAppDefine.MODEL_HARU);
+                live2DHelper.loadModel(LAppDefine.MODEL_SHIZUKU, function(){
+                    live2DHelper.loadModel(LAppDefine.MODEL_EPSILON);
+                });
+                //live2DHelper
+            };
+
+            document.getElementById("btnLoad").onclick = function(){
+               live2DHelper.loadModel(LAppDefine.MODEL_HARU_A);
+            }
+
+            document.getElementById("btnChange").onclick = function(){
+                live2DHelper.releaseAllModel();
+                live2DHelper.changeModel(LAppDefine.MODEL_HARU_B);
+            }
+
+            document.getElementById("btnRelease").onclick = function(){
+                live2DHelper.releaseModel(0);
             }
         </script>
     </body>

@@ -8,7 +8,7 @@ window.onerror = function(msg, url, line, col, error) {
 
 function Live2DHelper(setting)
 {
-	var defaultSetting = {
+    var defaultSetting = {
         canvas: ''
     };
 
@@ -16,12 +16,16 @@ function Live2DHelper(setting)
 
     this.platform = window.navigator.platform.toLowerCase();
     
-    this.live2DMgr = new LAppLive2DManager();
+    this.gl = null;
+    this.canvas = document.getElementById(defaultSetting.canvas);
+
+    if(this.canvas == null) {
+        console.log("live2d error: the canvas is undefined");
+    }
+
+    this.live2DMgr = new LAppLive2DManager(this.canvas);
 
     this.isDrawStart = false;
-    
-    this.gl = null;
-    this.canvas = document.getElementById(defaultSetting.canvas);;
     
     this.dragMgr = null; /*new L2DTargetPoint();*/ 
     this.viewMatrix = null; /*new L2DViewMatrix();*/
@@ -38,42 +42,11 @@ function Live2DHelper(setting)
     
     var live2dRef = this;
     
-    //initL2dCanvas(defaultSetting.canvas);
+    //this.initCanvasEvents();
     
-    
-    //init();
+    this.init();
 }
 
-
-Live2DHelper.prototype.initL2dCanvas = function(canvasId)
-{
-    
-    this.canvas = document.getElementById(canvasId);
-    
-    
-    if(this.canvas.addEventListener) {
-        this.canvas.addEventListener("mousewheel", mouseEvent, false);
-        this.canvas.addEventListener("click", mouseEvent, false);
-        
-        this.canvas.addEventListener("mousedown", mouseEvent, false);
-        this.canvas.addEventListener("mousemove", mouseEvent, false);
-        
-        this.canvas.addEventListener("mouseup", mouseEvent, false);
-        this.canvas.addEventListener("mouseout", mouseEvent, false);
-        this.canvas.addEventListener("contextmenu", mouseEvent, false);
-        
-        
-        this.canvas.addEventListener("touchstart", touchEvent, false);
-        this.canvas.addEventListener("touchend", touchEvent, false);
-        this.canvas.addEventListener("touchmove", touchEvent, false);
-        
-    }
-    
-    btnChangeModel = document.getElementById("btnChange");
-    btnChangeModel.addEventListener("click", function(e) {
-        changeModel();
-    });
-}
 
 function getWebGLContext(canvas)
 {
@@ -166,7 +139,6 @@ function live2dStartDraw(helper) {
 
 function live2dDraw(helper)
 {
-    // l2dLog("--> draw()");
 
     MatrixStack.reset();
     MatrixStack.loadIdentity();
@@ -206,124 +178,52 @@ function live2dDraw(helper)
 }
 
 
-function changeModel()
+/**
+ * --------------------------------------------------
+ *                  canvas listener
+ * --------------------------------------------------
+ */
+
+/*
+
+Live2DHelper.prototype.addEventListener = function(event, fun, useCapture)
 {
-    // TODO del
-    var btnChange = document.getElementById("btnChange");
-    btnChange.setAttribute("disabled","disabled");
-    btnChange.setAttribute("class", "inactive");
-    btnChange.textContent = "Now Loading...";
-    this.isModelShown = false;
-    
-    this.live2DMgr.reloadFlg = true;
-    this.live2DMgr.count++;
+    var helper = this;
+    if(this.canvas.addEventListener) {
+        this.canvas.addEventListener(event, function(event, this){ fn(event,helper); }, useCapture);
 
-    this.live2DMgr.changeModel(this.gl);
-}
-
-
-
-
-function modelScaling(scale)
-{   
-    var isMaxScale = thisRef.viewMatrix.isMaxScale();
-    var isMinScale = thisRef.viewMatrix.isMinScale();
-    
-    thisRef.viewMatrix.adjustScale(0, 0, scale);
-
-    
-    if (!isMaxScale)
-    {
-        if (thisRef.viewMatrix.isMaxScale())
-        {
-            thisRef.live2DMgr.maxScaleEvent();
-        }
-    }
-    
-    if (!isMinScale)
-    {
-        if (thisRef.viewMatrix.isMinScale())
-        {
-            thisRef.live2DMgr.minScaleEvent();
-        }
+        this.canvas.addEventListener("mousewheel", this.mouseEvent, false);
+        this.canvas.addEventListener("click", this.mouseEvent, false);
+        
+        this.canvas.addEventListener("mousedown", this.mouseEvent, false);
+        this.canvas.addEventListener("mousemove", this.mouseEvent, false);
+        
+        this.canvas.addEventListener("mouseup", this.mouseEvent, false);
+        this.canvas.addEventListener("mouseout", this.mouseEvent, false);
+        this.canvas.addEventListener("contextmenu", this.mouseEvent, false);
+        
+        
+        this.canvas.addEventListener("touchstart", this.touchEvent, false);
+        this.canvas.addEventListener("touchend", this.touchEvent, false);
+        this.canvas.addEventListener("touchmove", this.touchEvent, false);
     }
 }
+*/
 
-
-
-function modelTurnHead(event)
-{
-    thisRef.drag = true;
-    
-    var rect = event.target.getBoundingClientRect();
-    
-    var sx = transformScreenX(event.clientX - rect.left);
-    var sy = transformScreenY(event.clientY - rect.top);
-    var vx = transformViewX(event.clientX - rect.left);
-    var vy = transformViewY(event.clientY - rect.top);
-    
-    if (LAppDefine.DEBUG_MOUSE_LOG)
-        l2dLog("onMouseDown device( x:" + event.clientX + " y:" + event.clientY + " ) view( x:" + vx + " y:" + vy + ")");
-
-    thisRef.lastMouseX = sx;
-    thisRef.lastMouseY = sy;
-
-    thisRef.dragMgr.setPoint(vx, vy); 
-    
-    
-    thisRef.live2DMgr.tapEvent(vx, vy);
-}
-
-
-
-function followPointer(event)
-{    
-    var rect = event.target.getBoundingClientRect();
-    
-    var sx = transformScreenX(event.clientX - rect.left);
-    var sy = transformScreenY(event.clientY - rect.top);
-    var vx = transformViewX(event.clientX - rect.left);
-    var vy = transformViewY(event.clientY - rect.top);
-    
-    if (LAppDefine.DEBUG_MOUSE_LOG)
-        l2dLog("onMouseMove device( x:" + event.clientX + " y:" + event.clientY + " ) view( x:" + vx + " y:" + vy + ")");
-
-    if (thisRef.drag)
-    {
-        thisRef.lastMouseX = sx;
-        thisRef.lastMouseY = sy;
-
-        thisRef.dragMgr.setPoint(vx, vy); 
-    }
-}
-
-
-
-function lookFront()
-{   
-    if (thisRef.drag)
-    {
-        thisRef.drag = false;
-    }
-
-    thisRef.dragMgr.setPoint(0, 0);
-}
-
-
-function mouseEvent(e)
+Live2DHelper.prototype.mouseEvent = function(e)
 {
     e.preventDefault();
     
     if (e.type == "mousewheel") {
 
-        if (e.clientX < 0 || thisRef.canvas.clientWidth < e.clientX || 
-        e.clientY < 0 || thisRef.canvas.clientHeight < e.clientY)
+        if (e.clientX < 0 || this.canvas.clientWidth < e.clientX || 
+        e.clientY < 0 || this.canvas.clientHeight < e.clientY)
         {
             return;
         }
         
-        if (e.wheelDelta > 0) modelScaling(1.1); 
-        else modelScaling(0.9); 
+        if (e.wheelDelta > 0) this.modelScaling(1.1); 
+        else this.modelScaling(0.9); 
 
         
     } else if (e.type == "mousedown") {
@@ -331,7 +231,7 @@ function mouseEvent(e)
         
         if("button" in e && e.button != 0) return;
         
-        modelTurnHead(e);
+        this.modelTurnHead(e);
         
     } else if (e.type == "mousemove") {
         
@@ -342,7 +242,7 @@ function mouseEvent(e)
         
         if("button" in e && e.button != 0) return;
         
-        lookFront();
+        this.lookFront();
         
     } else if (e.type == "mouseout") {
         
@@ -350,13 +250,13 @@ function mouseEvent(e)
         
     } else if (e.type == "contextmenu") {
         
-        changeModel();
+        this.changeModel();
     }
 
 }
 
 
-function touchEvent(e)
+Live2DHelper.prototype.touchEvent = function(e)
 {
     e.preventDefault();
     
@@ -374,8 +274,8 @@ function touchEvent(e)
             var touch2 = e.touches[1];
             
             var len = Math.pow(touch1.pageX - touch2.pageX, 2) + Math.pow(touch1.pageY - touch2.pageY, 2);
-            if (thisRef.oldLen - len < 0) modelScaling(1.025); 
-            else modelScaling(0.975); 
+            if (thisRef.oldLen - len < 0) this.modelScaling(1.025); 
+            else this.modelScaling(0.975); 
             
             thisRef.oldLen = len;
         }
@@ -385,30 +285,115 @@ function touchEvent(e)
     }
 }
 
+/**
+ * --------------------------------------------------
+ *                   interactions
+ * --------------------------------------------------
+ */
+
+Live2DHelper.prototype.modelScaling = function(scale)
+{   
+    var isMaxScale = this.viewMatrix.isMaxScale();
+    var isMinScale = this.viewMatrix.isMinScale();
+    
+    this.viewMatrix.adjustScale(0, 0, scale);
+
+    
+    if (!isMaxScale)
+    {
+        if (this.viewMatrix.isMaxScale())
+        {
+            this.live2DMgr.maxScaleEvent();
+        }
+    }
+    
+    if (!isMinScale)
+    {
+        if (this.viewMatrix.isMinScale())
+        {
+            this.live2DMgr.minScaleEvent();
+        }
+    }
+}
 
 
 
-function transformViewX(deviceX)
+Live2DHelper.prototype.modelTurnHead = function(event)
+{
+    this.drag = true;
+    
+    var rect = event.target.getBoundingClientRect();
+    
+    var sx = transformScreenX(event.clientX - rect.left);
+    var sy = transformScreenY(event.clientY - rect.top);
+    var vx = transformViewX(event.clientX - rect.left);
+    var vy = transformViewY(event.clientY - rect.top);
+    
+    if (LAppDefine.DEBUG_MOUSE_LOG)
+        l2dLog("onMouseDown device( x:" + event.clientX + " y:" + event.clientY + " ) view( x:" + vx + " y:" + vy + ")");
+
+    this.lastMouseX = sx;
+    this.lastMouseY = sy;
+
+    this.dragMgr.setPoint(vx, vy); 
+    
+    
+    this.live2DMgr.tapEvent(vx, vy);
+}
+
+Live2DHelper.prototype.followPointer = function(event)
+{    
+    var rect = event.target.getBoundingClientRect();
+    
+    var sx = transformScreenX(event.clientX - rect.left);
+    var sy = transformScreenY(event.clientY - rect.top);
+    var vx = transformViewX(event.clientX - rect.left);
+    var vy = transformViewY(event.clientY - rect.top);
+    
+    if (LAppDefine.DEBUG_MOUSE_LOG)
+        l2dLog("onMouseMove device( x:" + event.clientX + " y:" + event.clientY + " ) view( x:" + vx + " y:" + vy + ")");
+
+    if (this.drag)
+    {
+        this.lastMouseX = sx;
+        this.lastMouseY = sy;
+
+        this.dragMgr.setPoint(vx, vy); 
+    }
+}
+
+Live2DHelper.prototype.lookFront = function()
+{   
+    if (this.drag)
+    {
+        this.drag = false;
+    }
+
+    this.dragMgr.setPoint(0, 0);
+}
+
+
+Live2DHelper.prototype.transformViewX = function(deviceX)
 {
     var screenX = this.deviceToScreen.transformX(deviceX); 
     return viewMatrix.invertTransformX(screenX); 
 }
 
 
-function transformViewY(deviceY)
+Live2DHelper.prototype.transformViewY = function(deviceY)
 {
     var screenY = this.deviceToScreen.transformY(deviceY); 
     return viewMatrix.invertTransformY(screenY); 
 }
 
 
-function transformScreenX(deviceX)
+Live2DHelper.prototype.transformScreenX = function(deviceX)
 {
     return this.deviceToScreen.transformX(deviceX);
 }
 
 
-function transformScreenY(deviceY)
+Live2DHelper.prototype.transformScreenY = function(deviceY)
 {
     return this.deviceToScreen.transformY(deviceY);
 }
@@ -442,6 +427,41 @@ function l2dError(msg)
 
 
 
-Live2DHelper.prototype.loadModel  = function(modelPath) {
-	this.live2DMgr.loadModel(this.gl, modelPath);
+
+/**
+ * load model
+ * @param  {string}   path of model
+ * @param  {Function} callback
+ */
+Live2DHelper.prototype.loadModel = function(modelPath, callback) {
+    this.live2DMgr.loadModel(this.gl, modelPath, callback);
+}
+
+/**
+ * release model
+ * @param  {int} model index
+ */
+Live2DHelper.prototype.releaseModel = function(no) {
+    this.live2DMgr.releaseModel(this.gl, no);
+}
+
+/**
+ * release all model
+ */
+Live2DHelper.prototype.releaseAllModel = function() {
+    var count = this.live2DMgr.models.length;
+    for(var i = count; i > 0; i--) {
+        this.live2DMgr.releaseModel(this.gl, i);
+    }
+}
+
+/**
+ * the model in bottom of stack release,
+ * and the new model will push in top of stack.
+ * ! this function is recommended when you have only ctreated one model.
+ * @param  {string} new model path
+ */
+Live2DHelper.prototype.changeModel = function(newModelPath) {
+    this.live2DMgr.reloadFlg = true;
+    this.live2DMgr.changeModel(this.gl, newModelPath);
 }
