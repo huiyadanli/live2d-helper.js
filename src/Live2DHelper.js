@@ -137,8 +137,8 @@ function live2dDraw(helper)
     MatrixStack.loadIdentity();
     
     helper.dragMgr.update(); 
-    helper.live2DMgr.setDrag(helper.dragMgr.getX(), helper.dragMgr.getY());
-    
+    //helper.live2DMgr.setDrag(helper.dragMgr.getX(), helper.dragMgr.getY());
+    helper.live2DMgr.setDrag();
     
     helper.gl.clear(helper.gl.COLOR_BUFFER_BIT);
     
@@ -324,7 +324,7 @@ Live2DHelper.prototype.modelTurnHead = function(event)
 }
 */
 
-Live2DHelper.prototype.headFollowPointer = function(event)
+Live2DHelper.prototype.viewFollowPointer = function(event, no)
 {    
     var rect = event.target.getBoundingClientRect();
     
@@ -335,12 +335,22 @@ Live2DHelper.prototype.headFollowPointer = function(event)
 
     this.lastMouseX = sx;
     this.lastMouseY = sy;
-    this.dragMgr.setPoint(vx, vy); 
+    //this.dragMgr.setPoint(vx, vy);
+    this.viewPointer(vx, vy, no);
 }
 
-Live2DHelper.prototype.headLookForward = function()
+Live2DHelper.prototype.viewPointer = function(x, y, no)
 {
-    this.dragMgr.setPoint(0, 0);
+    this.dragMgr.setPoint(x, y);
+    //this.dragMgr.update(); 
+    if(no == null) {
+        for (var i = 0; i < this.live2DMgr.models.length; i++)
+        {
+            this.live2DMgr.models[i].setDragMgr(this.dragMgr);
+        }
+    } else {
+        this.live2DMgr.models[no].setDragMgr(this.dragMgr);
+    }
 }
 
 

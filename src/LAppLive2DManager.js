@@ -121,7 +121,11 @@ LAppLive2DManager.prototype.setDrag = function(x, y)
 {
     for (var i = 0; i < this.models.length; i++)
     {
-        this.models[i].setDrag(x, y);
+        var dragMgr = this.models[i].dragMgr;
+        if(dragMgr != null)
+        {
+            this.models[i].setDrag(dragMgr.getX(), dragMgr.getY());
+        }
     }
 }
 

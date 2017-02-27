@@ -11,10 +11,17 @@ function LAppModel()
     this.modelHomeDir = "";
     this.modelSetting = null;
     this.tmpMatrix = [];
+
+    this.dragMgr = null; // control face orientation
+
 }
 
 LAppModel.prototype = new L2DBaseModel();
 
+LAppModel.prototype.setDragMgr = function(dragMgr)
+{
+    this.dragMgr = dragMgr;
+}
 
 LAppModel.prototype.load = function(gl, modelSettingPath, callback)
 {

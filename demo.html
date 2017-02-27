@@ -94,7 +94,7 @@
                     
                 }
 
-                // window.addEventListener("mousemove", followPointer, false)
+                window.addEventListener("mousemove", followPointer, false)
             };
 
             document.getElementById("btnLoad").onclick = function(){
@@ -150,7 +150,7 @@
             }
 
             function followPointer(e) {
-                live2DHelper.followPointer(e);
+                live2DHelper.viewFollowPointer(e, 0);
             }
 
         </script>
