@@ -73,7 +73,28 @@
                 live2DHelper.loadModel(LAppDefine.MODEL_SHIZUKU, function(){
                     live2DHelper.loadModel(LAppDefine.MODEL_EPSILON);
                 });
-                //live2DHelper
+
+                this.canvas = document.getElementById('glcanvas');
+
+                if(this.canvas.addEventListener) {
+                    // this.canvas.addEventListener("mousewheel", mouseEvent, false);
+                    // this.canvas.addEventListener("click", mouseEvent, false);
+                    
+                    // this.canvas.addEventListener("mousedown", mouseEvent, false);
+                    // this.canvas.addEventListener("mousemove", mouseEvent, false);
+                    
+                    // this.canvas.addEventListener("mouseup", mouseEvent, false);
+                    // this.canvas.addEventListener("mouseout", mouseEvent, false);
+                    // this.canvas.addEventListener("contextmenu", mouseEvent, false);
+                    
+                    
+                    // this.canvas.addEventListener("touchstart", touchEvent, false);
+                    // this.canvas.addEventListener("touchend", touchEvent, false);
+                    // this.canvas.addEventListener("touchmove", touchEvent, false);
+                    
+                }
+
+                // window.addEventListener("mousemove", followPointer, false)
             };
 
             document.getElementById("btnLoad").onclick = function(){
@@ -88,6 +109,50 @@
             document.getElementById("btnRelease").onclick = function(){
                 live2DHelper.releaseModel(0);
             }
+
+            function mouseEvent(e)
+            {
+                e.preventDefault();
+                
+                if (e.type == "mousewheel") {
+
+                    // if (e.clientX < 0 || thisRef.canvas.clientWidth < e.clientX || 
+                    // e.clientY < 0 || thisRef.canvas.clientHeight < e.clientY)
+                    // {
+                    //     return;
+                    // }
+                    
+                    // if (e.wheelDelta > 0) modelScaling(1.1); 
+                    // else modelScaling(0.9); 
+
+                    
+                } else if (e.type == "mousedown") {
+
+                    // if("button" in e && e.button != 0) return;
+                    // live2DHelper.modelTurnHead(e);
+
+                } else if (e.type == "mousemove") {
+
+                    live2DHelper.followPointer(e);
+
+                } else if (e.type == "mouseup") {
+
+                    if("button" in e && e.button != 0) return;
+                    live2DHelper.lookFront();
+
+                } else if (e.type == "mouseout") {
+
+                    live2DHelper.lookFront();
+
+                } else if (e.type == "contextmenu") {
+                    //live2DHelper.changeModel();
+                }
+            }
+
+            function followPointer(e) {
+                live2DHelper.followPointer(e);
+            }
+
         </script>
     </body>
 </html>

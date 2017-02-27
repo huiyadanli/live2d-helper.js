@@ -32,18 +32,11 @@ function Live2DHelper(setting)
     this.projMatrix = null; /*new L2DMatrix44()*/
     this.deviceToScreen = null; /*new L2DMatrix44();*/
     
-    this.drag = false; 
     this.oldLen = 0;
     
     this.lastMouseX = 0;
     this.lastMouseY = 0;
-    
-    this.isModelShown = false;
-    
-    var live2dRef = this;
-    
-    //this.initCanvasEvents();
-    
+
     this.init();
 }
 
@@ -163,14 +156,6 @@ function live2dDraw(helper)
         {
             model.update();
             model.draw(helper.gl);
-            
-            if (!helper.isModelShown && i == helper.live2DMgr.numModels()-1) {
-                helper.isModelShown = !helper.isModelShown;
-                var btnChange = document.getElementById("btnChange");
-                btnChange.textContent = "Change Model";
-                btnChange.removeAttribute("disabled");
-                btnChange.setAttribute("class", "active");
-            }
         }
     }
     
@@ -317,20 +302,17 @@ Live2DHelper.prototype.modelScaling = function(scale)
 }
 
 
-
+/*
 Live2DHelper.prototype.modelTurnHead = function(event)
 {
     this.drag = true;
     
     var rect = event.target.getBoundingClientRect();
     
-    var sx = transformScreenX(event.clientX - rect.left);
-    var sy = transformScreenY(event.clientY - rect.top);
-    var vx = transformViewX(event.clientX - rect.left);
-    var vy = transformViewY(event.clientY - rect.top);
-    
-    if (LAppDefine.DEBUG_MOUSE_LOG)
-        l2dLog("onMouseDown device( x:" + event.clientX + " y:" + event.clientY + " ) view( x:" + vx + " y:" + vy + ")");
+    var sx = this.transformScreenX(event.clientX - rect.left);
+    var sy = this.transformScreenY(event.clientY - rect.top);
+    var vx = this.transformViewX(event.clientX - rect.left);
+    var vy = this.transformViewY(event.clientY - rect.top);
 
     this.lastMouseX = sx;
     this.lastMouseY = sy;
@@ -340,35 +322,24 @@ Live2DHelper.prototype.modelTurnHead = function(event)
     
     this.live2DMgr.tapEvent(vx, vy);
 }
+*/
 
-Live2DHelper.prototype.followPointer = function(event)
+Live2DHelper.prototype.headFollowPointer = function(event)
 {    
     var rect = event.target.getBoundingClientRect();
     
-    var sx = transformScreenX(event.clientX - rect.left);
-    var sy = transformScreenY(event.clientY - rect.top);
-    var vx = transformViewX(event.clientX - rect.left);
-    var vy = transformViewY(event.clientY - rect.top);
-    
-    if (LAppDefine.DEBUG_MOUSE_LOG)
-        l2dLog("onMouseMove device( x:" + event.clientX + " y:" + event.clientY + " ) view( x:" + vx + " y:" + vy + ")");
+    var sx = this.transformScreenX(event.clientX - rect.left);
+    var sy = this.transformScreenY(event.clientY - rect.top);
+    var vx = this.transformViewX(event.clientX - rect.left);
+    var vy = this.transformViewY(event.clientY - rect.top);
 
-    if (this.drag)
-    {
-        this.lastMouseX = sx;
-        this.lastMouseY = sy;
-
-        this.dragMgr.setPoint(vx, vy); 
-    }
+    this.lastMouseX = sx;
+    this.lastMouseY = sy;
+    this.dragMgr.setPoint(vx, vy); 
 }
 
-Live2DHelper.prototype.lookFront = function()
-{   
-    if (this.drag)
-    {
-        this.drag = false;
-    }
-
+Live2DHelper.prototype.headLookForward = function()
+{
     this.dragMgr.setPoint(0, 0);
 }
 
@@ -376,14 +347,14 @@ Live2DHelper.prototype.lookFront = function()
 Live2DHelper.prototype.transformViewX = function(deviceX)
 {
     var screenX = this.deviceToScreen.transformX(deviceX); 
-    return viewMatrix.invertTransformX(screenX); 
+    return this.viewMatrix.invertTransformX(screenX); 
 }
 
 
 Live2DHelper.prototype.transformViewY = function(deviceY)
 {
     var screenY = this.deviceToScreen.transformY(deviceY); 
-    return viewMatrix.invertTransformY(screenY); 
+    return this.viewMatrix.invertTransformY(screenY); 
 }
 
 
@@ -397,9 +368,6 @@ Live2DHelper.prototype.transformScreenY = function(deviceY)
 {
     return this.deviceToScreen.transformY(deviceY);
 }
-
-
-
 
 
 
