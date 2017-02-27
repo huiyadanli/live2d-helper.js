@@ -37,6 +37,9 @@ function Live2DHelper(setting)
     this.lastMouseX = 0;
     this.lastMouseY = 0;
 
+    /* virtual object */
+    this.pModel = 0;
+
     this.init();
 }
 
@@ -324,7 +327,20 @@ Live2DHelper.prototype.modelTurnHead = function(event)
 }
 */
 
-Live2DHelper.prototype.viewFollowPointer = function(event, no)
+Live2DHelper.prototype.startTurnHead = function(no)
+{
+    if(no == null) no = 0;
+    this.live2DMgr.models[no].setDragMgr(this.dragMgr);
+}
+
+Live2DHelper.prototype.stopTurnHead = function(no)
+{
+    if(no == null) no = 0;
+    this.modelsViewPointer(0, 0);
+    this.live2DMgr.models[no].setDragMgr(null);
+}
+
+Live2DHelper.prototype.followPointer = function(event)
 {    
     var rect = event.target.getBoundingClientRect();
     
@@ -336,21 +352,12 @@ Live2DHelper.prototype.viewFollowPointer = function(event, no)
     this.lastMouseX = sx;
     this.lastMouseY = sy;
     //this.dragMgr.setPoint(vx, vy);
-    this.viewPointer(vx, vy, no);
+    this.viewPointer(vx, vy);
 }
 
-Live2DHelper.prototype.viewPointer = function(x, y, no)
+Live2DHelper.prototype.viewPointer = function(x, y)
 {
     this.dragMgr.setPoint(x, y);
-    //this.dragMgr.update(); 
-    if(no == null) {
-        for (var i = 0; i < this.live2DMgr.models.length; i++)
-        {
-            this.live2DMgr.models[i].setDragMgr(this.dragMgr);
-        }
-    } else {
-        this.live2DMgr.models[no].setDragMgr(this.dragMgr);
-    }
 }
 
 
@@ -420,6 +427,7 @@ Live2DHelper.prototype.loadModel = function(modelPath, callback) {
  * @param  {int} model index
  */
 Live2DHelper.prototype.releaseModel = function(no) {
+    if(no == null) no = 0;
     this.live2DMgr.releaseModel(this.gl, no);
 }
 
@@ -442,4 +450,27 @@ Live2DHelper.prototype.releaseAllModel = function() {
 Live2DHelper.prototype.changeModel = function(newModelPath) {
     this.live2DMgr.reloadFlg = true;
     this.live2DMgr.changeModel(this.gl, newModelPath);
+}
+
+
+/**
+ * ---------------------------------------------------------------
+ *                         virtual method
+ *   Make code more readable when many models in one canvas
+ *   But it will cause many problem when the method is invoked in 
+ *   a different order! So I abandon it.
+ * ---------------------------------------------------------------
+ */
+Live2DHelper.prototype.getModel = function(no) {
+    this.pModel = no;
+    return this;
+}
+
+Live2DHelper.prototype.startPointer = function() {
+    this.modelStartPointer(this.pModel);
+    return this;
+}
+
+Live2DHelper.prototype.change = function(newModelPath) {
+    this.modelStartPointer(this.pModel);
 }

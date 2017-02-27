@@ -71,7 +71,10 @@
 
             window.onload = function() {
                 live2DHelper.loadModel(LAppDefine.MODEL_SHIZUKU, function(){
-                    live2DHelper.loadModel(LAppDefine.MODEL_EPSILON);
+                    live2DHelper.loadModel(LAppDefine.MODEL_EPSILON, function(){
+                        live2DHelper.startTurnHead(1);
+                        window.addEventListener("mousemove", followPointer, false)
+                    });
                 });
 
                 this.canvas = document.getElementById('glcanvas');
@@ -94,7 +97,6 @@
                     
                 }
 
-                window.addEventListener("mousemove", followPointer, false)
             };
 
             document.getElementById("btnLoad").onclick = function(){
@@ -150,7 +152,7 @@
             }
 
             function followPointer(e) {
-                live2DHelper.viewFollowPointer(e, 0);
+                live2DHelper.followPointer(e);
             }
 
         </script>
