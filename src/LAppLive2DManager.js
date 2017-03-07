@@ -33,49 +33,6 @@ LAppLive2DManager.prototype.changeModel = function(gl, newModelPath)
         this.reloadFlg = false;
         this.releaseModel(gl, 0);
         this.createModel().load(gl, newModelPath);
-        /*var no = parseInt(this.count % 5);
-
-        var thisRef = this;
-        switch (no)
-        {
-            case 0: 
-                this.releaseModel(1, gl);
-                this.releaseModel(0, gl);
-                
-                this.createModel().load(gl, LAppDefine.MODEL_HARU);
-                //this.models[0].load(gl, LAppDefine.MODEL_HARU);
-                break;
-            case 1: 
-                this.releaseModel(0, gl);
-                this.createModel();
-                this.models[0].load(gl, LAppDefine.MODEL_SHIZUKU);
-                break;
-            case 2: 
-                this.releaseModel(0, gl);
-                this.createModel();
-                this.models[0].load(gl, LAppDefine.MODEL_WANKO);
-                break;
-            case 3: 
-                this.releaseModel(0, gl);
-                this.createModel();
-                this.models[0].load(gl, LAppDefine.MODEL_EPSILON);
-                break;
-            case 4: 
-                this.releaseModel(0, gl);
-                // 一体目のモデル
-                this.createModel();
-                this.models[0].load(gl, LAppDefine.MODEL_HARU_A, function() {
-                    // 二体目のモデル
-                    thisRef.createModel();
-                    thisRef.models[1].load(gl, LAppDefine.MODEL_HARU_B, function() {
-                        thisRef.createModel();
-                        thisRef.models[2].load(gl, LAppDefine.MODEL_EPSILON);
-                    });
-                });
-                break;
-            default:
-                break;
-        }*/
     }
 };
 
@@ -129,7 +86,26 @@ LAppLive2DManager.prototype.setDrag = function(x, y)
     }
 }
 
-
+LAppLive2DManager.prototype.playSound = function(path, no)
+{
+    var thisRef = this;
+    var noRef = no;
+    var request = new XMLHttpRequest();
+    request.open("GET", path, true);
+    request.responseType = "arraybuffer";
+    request.onload = function(){
+        switch(request.status){
+        case 200:
+            var arraybuffer = request.response;
+            thisRef.models[noRef].playSound(arraybuffer);
+            break;
+        default:
+            console.error("Failed to load (" + request.status + ") : " + path);
+            break;
+        }
+    }
+    request.send();
+}
 
 LAppLive2DManager.prototype.maxScaleEvent = function()
 {

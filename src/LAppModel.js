@@ -14,6 +14,13 @@ function LAppModel()
 
     this.dragMgr = null; // control face orientation
 
+    this.audioElement = null;
+    this.audioContext = null;
+    this.audioAnalyser = null;
+    this.bufferSource = null;
+
+    this.intervalId = null;
+
 }
 
 LAppModel.prototype = new L2DBaseModel();
@@ -134,7 +141,6 @@ LAppModel.prototype.load = function(gl, modelSettingPath, callback)
                         
                         for (var j = 0; j < thisRef.modelSetting.getInitParamNum(); j++)
                         {
-                            
                             thisRef.live2DModel.setParamFloat(
                                 thisRef.modelSetting.getInitParamID(j),
                                 thisRef.modelSetting.getInitParamValue(j)
@@ -143,7 +149,6 @@ LAppModel.prototype.load = function(gl, modelSettingPath, callback)
 
                         for (var j = 0; j < thisRef.modelSetting.getInitPartsVisibleNum(); j++)
                         {
-                            
                             thisRef.live2DModel.setPartsOpacity(
                                 thisRef.modelSetting.getInitPartsVisibleID(j),
                                 thisRef.modelSetting.getInitPartsVisibleValue(j)
@@ -284,7 +289,7 @@ LAppModel.prototype.update = function()
     }
     
     
-    if (this.lipSync == null)
+    if (this.lipSync)
     {
         this.live2DModel.setParamFloat("PARAM_MOUTH_OPEN_Y",
                                        this.lipSyncValue);
@@ -402,7 +407,70 @@ LAppModel.prototype.setFadeInFadeOut = function(name, no, priority, motion)
     }
 }
 
+LAppModel.prototype.playSound = function (arraybuffer) {
+    // var audio = this.audioElement || document.createElement("audio");
+    // !this.audioElement && (this.audioElement = audio);
+    // audio.src = path;
+    clearInterval(this.intervalId);
+    var thisRef = this;
+    var AudioContext = window.AudioContext || window.webkitAudioContext || window.mozAudioContext || window.msAudioContext;
+    if (AudioContext) {
+        var context = this.audioContext || new AudioContext();
+        if (!this.audioContext) {
+            this.audioContext = context;
+            //this.audioElementSource = context.createMediaElementSource(audio);
+            //this.bufferSource = context.createBufferSource();
+        }
+        if(thisRef.bufferSource != null) {
+            thisRef.bufferSource.stop();
+            thisRef.bufferSource = null;
+            clearInterval(thisRef.intervalId);
+            thisRef.lipSyncValue = 0;
+        }
+        //var source = this.audioElementSource;
+        context.decodeAudioData(arraybuffer, function (buffer) {
 
+            thisRef.bufferSource = context.createBufferSource();
+            thisRef.bufferSource.buffer = buffer;
+            thisRef.bufferSource.connect(context.destination);
+            thisRef.bufferSource.loop = false;
+
+            var analyser = thisRef.audioAnalyser || context.createAnalyser();
+            !thisRef.audioAnalyser && (thisRef.audioAnalyser = analyser);
+
+            analyser.fftSize = 32;
+            var bufferLength = analyser.frequencyBinCount;
+
+            var cache = [];
+            var lastTime = Date.now();
+            thisRef.intervalId = setInterval(function () {
+                var dataArray = new Uint8Array(bufferLength);
+                analyser.getByteFrequencyData(dataArray);
+                var value = (dataArray[9] + dataArray[10] + dataArray[11]) / 3;
+                if (Date.now() - lastTime < 33) {
+                    cache.push(value);
+                } else {
+                    var lipValue = cache.length ? cache.reduce(function (previous, current) {
+                        return current += previous;
+                    }) / cache.length / 100 : thisRef.lipSyncValue;
+                    thisRef.lipSync = true;
+                    thisRef.lipSyncValue = lipValue;
+                    lastTime = Date.now();
+                    cache = [];
+                }
+            }, 0);
+            thisRef.bufferSource.onended = function (){
+                clearInterval(thisRef.intervalId);
+                thisRef.lipSyncValue = 0;
+            };
+            
+            thisRef.bufferSource.connect(analyser);
+            analyser.connect(context.destination);
+            thisRef.bufferSource.start(0);
+        });
+    }
+
+}
 
 LAppModel.prototype.setExpression = function(name)
 {

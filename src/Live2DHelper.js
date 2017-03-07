@@ -172,32 +172,6 @@ function live2dDraw(helper)
  * --------------------------------------------------
  */
 
-/*
-
-Live2DHelper.prototype.addEventListener = function(event, fun, useCapture)
-{
-    var helper = this;
-    if(this.canvas.addEventListener) {
-        this.canvas.addEventListener(event, function(event, this){ fn(event,helper); }, useCapture);
-
-        this.canvas.addEventListener("mousewheel", this.mouseEvent, false);
-        this.canvas.addEventListener("click", this.mouseEvent, false);
-        
-        this.canvas.addEventListener("mousedown", this.mouseEvent, false);
-        this.canvas.addEventListener("mousemove", this.mouseEvent, false);
-        
-        this.canvas.addEventListener("mouseup", this.mouseEvent, false);
-        this.canvas.addEventListener("mouseout", this.mouseEvent, false);
-        this.canvas.addEventListener("contextmenu", this.mouseEvent, false);
-        
-        
-        this.canvas.addEventListener("touchstart", this.touchEvent, false);
-        this.canvas.addEventListener("touchend", this.touchEvent, false);
-        this.canvas.addEventListener("touchmove", this.touchEvent, false);
-    }
-}
-*/
-
 Live2DHelper.prototype.mouseEvent = function(e)
 {
     e.preventDefault();
@@ -304,28 +278,6 @@ Live2DHelper.prototype.modelScaling = function(scale)
     }
 }
 
-
-/*
-Live2DHelper.prototype.modelTurnHead = function(event)
-{
-    this.drag = true;
-    
-    var rect = event.target.getBoundingClientRect();
-    
-    var sx = this.transformScreenX(event.clientX - rect.left);
-    var sy = this.transformScreenY(event.clientY - rect.top);
-    var vx = this.transformViewX(event.clientX - rect.left);
-    var vy = this.transformViewY(event.clientY - rect.top);
-
-    this.lastMouseX = sx;
-    this.lastMouseY = sy;
-
-    this.dragMgr.setPoint(vx, vy); 
-    
-    
-    this.live2DMgr.tapEvent(vx, vy);
-}
-*/
 
 Live2DHelper.prototype.startTurnHead = function(no)
 {
@@ -452,6 +404,35 @@ Live2DHelper.prototype.changeModel = function(newModelPath) {
     this.live2DMgr.changeModel(this.gl, newModelPath);
 }
 
+Live2DHelper.prototype.setRandomExpression = function(no) {
+    if(no == null) no = 0;
+    this.live2DMgr.models[no].setRandomExpression();
+}
+
+Live2DHelper.prototype.gerExpressions = function(no) {
+    if(no == null) no = 0;
+    return this.live2DMgr.models[no].expressions;
+}
+
+Live2DHelper.prototype.setExpression = function(name, no) {
+    if(no == null) no = 0;
+    this.live2DMgr.models[no].setExpression(name);
+}
+
+Live2DHelper.prototype.startRandomMotion = function(no) {
+    if(no == null) no = 0;
+    this.live2DMgr.models[no].setRandomExpression();
+}
+
+Live2DHelper.prototype.startMotion = function(namespace, num, no) {
+    if(no == null) no = 0;
+    this.live2DMgr.models[no].startMotion(namespace, num, LAppDefine.PRIORITY_FORCE);
+}
+
+Live2DHelper.prototype.playSound = function(path, no) {
+    if(no == null) no = 0;
+    this.live2DMgr.playSound(path, no);
+}
 
 /**
  * ---------------------------------------------------------------

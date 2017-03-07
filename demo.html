@@ -42,8 +42,35 @@
             <button id="btnChange">Change Model</button>
 
             <button id="btnRelease">Release Model</button>
+
+            
         </p>
-        
+
+        <p>
+            <button id="btnRandomExpression">Random Expression</button>
+            <button id="btnLoadExpressions">Load Expressions</button>
+        </p>
+        <div id="expressions"></div>
+            
+
+        <p>
+            <select id="motionName">
+                <option value=""></option>
+                <option value="idle">idle</option>
+                <option value="tap_body">tap_body</option>
+                <option value="flick_head">flick_head</option>
+                <option value="pinch_in">pinch_in</option>
+                <option value="pinch_out">pinch_out</option>
+                <option value="shake">shake</option>
+            </select>
+            <input id="motionNum" value="0"></input>
+            <button id="btnStartMotion">Start Motion</button>
+        </p>
+
+        <p>
+            <button id="btnPlaySound">Play Sound</button>
+        </p>
+
         <div>
             <canvas id="glcanvas" width="400" height="500" 
                 style="border:dashed 1px #CCC">
@@ -70,89 +97,70 @@
             var live2DHelper = new Live2DHelper({canvas: 'glcanvas'});
 
             window.onload = function() {
-                live2DHelper.loadModel(LAppDefine.MODEL_SHIZUKU, function(){
-                    live2DHelper.loadModel(LAppDefine.MODEL_EPSILON, function(){
-                        live2DHelper.startTurnHead(1);
-                        window.addEventListener("mousemove", followPointer, false)
-                    });
+                var path = "assets/models/asuna/asuna_01/asuna_01.model.json";
+                //var path = LAppDefine.MODEL_HARU;
+                live2DHelper.loadModel(path, function(){
+                    live2DHelper.startTurnHead();
+                    document.getElementById("glcanvas").addEventListener("mousemove", followPointer, false);
+                    //window.addEventListener("mousemove", followPointer, false);
                 });
-
-                this.canvas = document.getElementById('glcanvas');
-
-                if(this.canvas.addEventListener) {
-                    // this.canvas.addEventListener("mousewheel", mouseEvent, false);
-                    // this.canvas.addEventListener("click", mouseEvent, false);
-                    
-                    // this.canvas.addEventListener("mousedown", mouseEvent, false);
-                    // this.canvas.addEventListener("mousemove", mouseEvent, false);
-                    
-                    // this.canvas.addEventListener("mouseup", mouseEvent, false);
-                    // this.canvas.addEventListener("mouseout", mouseEvent, false);
-                    // this.canvas.addEventListener("contextmenu", mouseEvent, false);
-                    
-                    
-                    // this.canvas.addEventListener("touchstart", touchEvent, false);
-                    // this.canvas.addEventListener("touchend", touchEvent, false);
-                    // this.canvas.addEventListener("touchmove", touchEvent, false);
-                    
-                }
-
             };
-
-            document.getElementById("btnLoad").onclick = function(){
-               live2DHelper.loadModel(LAppDefine.MODEL_HARU_A);
-            }
-
-            document.getElementById("btnChange").onclick = function(){
-                live2DHelper.releaseAllModel();
-                live2DHelper.changeModel(LAppDefine.MODEL_HARU_B);
-            }
-
-            document.getElementById("btnRelease").onclick = function(){
-                live2DHelper.releaseModel(0);
-            }
-
-            function mouseEvent(e)
-            {
-                e.preventDefault();
-                
-                if (e.type == "mousewheel") {
-
-                    // if (e.clientX < 0 || thisRef.canvas.clientWidth < e.clientX || 
-                    // e.clientY < 0 || thisRef.canvas.clientHeight < e.clientY)
-                    // {
-                    //     return;
-                    // }
-                    
-                    // if (e.wheelDelta > 0) modelScaling(1.1); 
-                    // else modelScaling(0.9); 
-
-                    
-                } else if (e.type == "mousedown") {
-
-                    // if("button" in e && e.button != 0) return;
-                    // live2DHelper.modelTurnHead(e);
-
-                } else if (e.type == "mousemove") {
-
-                    live2DHelper.followPointer(e);
-
-                } else if (e.type == "mouseup") {
-
-                    if("button" in e && e.button != 0) return;
-                    live2DHelper.lookFront();
-
-                } else if (e.type == "mouseout") {
-
-                    live2DHelper.lookFront();
-
-                } else if (e.type == "contextmenu") {
-                    //live2DHelper.changeModel();
-                }
-            }
 
             function followPointer(e) {
                 live2DHelper.followPointer(e);
+            }
+
+            document.getElementById("btnLoad").onclick = function(){
+                live2DHelper.loadModel(LAppDefine.MODEL_HARU_A);
+            }
+
+            var modelNum = 1;
+            document.getElementById("btnChange").onclick = function(){
+                modelNum++;
+                live2DHelper.releaseAllModel();
+                if(modelNum >= 10) {
+                    live2DHelper.changeModel("assets/models/asuna/asuna_"+modelNum+"/asuna_"+modelNum+".model.json");
+                } else {
+                    live2DHelper.changeModel("assets/models/asuna/asuna_0"+modelNum+"/asuna_0"+modelNum+".model.json");
+                }
+                console.log(modelNum);
+            }
+
+            document.getElementById("btnRelease").onclick = function(){
+                live2DHelper.releaseModel();
+            }
+
+            document.getElementById("btnRandomExpression").onclick = function(){
+                live2DHelper.setRandomExpression();
+            }
+
+            document.getElementById("btnLoadExpressions").onclick = function(){
+                 document.getElementById("expressions").innerHTML = '';
+                for (var name in live2DHelper.gerExpressions()) {
+                    var button = document.createElement("input");
+                    button.setAttribute("type","button");
+                    button.setAttribute("value",name);
+                    button.setAttribute("id",name);
+                    document.getElementById("expressions").appendChild(button);
+                }
+                for (var name in live2DHelper.gerExpressions()) {
+                    (function(name){
+                        document.getElementById(name).onclick = function(){
+                            live2DHelper.setExpression(name);
+                        };
+                    })(name);
+                }
+            }
+
+            document.getElementById("btnStartMotion").onclick = function(){
+                var  motionName = document.getElementById("motionName");
+                var i1 = motionName.selectedIndex;
+                var  motionNum = document.getElementById("motionNum");
+                live2DHelper.startMotion(motionName.options[i1].value, motionNum.value);
+            }
+
+            document.getElementById("btnPlaySound").onclick = function(){
+                live2DHelper.playSound("/assets/sound/2.mp3");
             }
 
         </script>
