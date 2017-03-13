@@ -23,7 +23,7 @@ LAppLive2DManager.prototype.createModel = function()
 }
 
 
-LAppLive2DManager.prototype.changeModel = function(gl, newModelPath)
+LAppLive2DManager.prototype.changeModel = function(gl, newModelPath, callback)
 {
     // console.log("--> LAppLive2DManager.update(gl)");
     
@@ -32,7 +32,7 @@ LAppLive2DManager.prototype.changeModel = function(gl, newModelPath)
         
         this.reloadFlg = false;
         this.releaseModel(gl, 0);
-        this.createModel().load(gl, newModelPath);
+        this.createModel().load(gl, newModelPath, callback);
     }
 };
 
@@ -86,7 +86,7 @@ LAppLive2DManager.prototype.setDrag = function(x, y)
     }
 }
 
-LAppLive2DManager.prototype.playSound = function(path, no)
+LAppLive2DManager.prototype.playSoundAJAX = function(path, no)
 {
     var thisRef = this;
     var noRef = no;
@@ -97,7 +97,7 @@ LAppLive2DManager.prototype.playSound = function(path, no)
         switch(request.status){
         case 200:
             var arraybuffer = request.response;
-            thisRef.models[noRef].playSound(arraybuffer);
+            thisRef.models[noRef].playSoundAJAX(arraybuffer);
             break;
         default:
             console.error("Failed to load (" + request.status + ") : " + path);
@@ -107,30 +107,10 @@ LAppLive2DManager.prototype.playSound = function(path, no)
     request.send();
 }
 
-LAppLive2DManager.prototype.maxScaleEvent = function()
+LAppLive2DManager.prototype.playSound = function(path, no)
 {
-    if (LAppDefine.DEBUG_LOG)
-        console.log("Max scale event.");
-    for (var i = 0; i < this.models.length; i++)
-    {
-        this.models[i].startRandomMotion(LAppDefine.MOTION_GROUP_PINCH_IN,
-                                         LAppDefine.PRIORITY_NORMAL);
-    }
+    this.models[no].playSound(path);
 }
-
-
-
-LAppLive2DManager.prototype.minScaleEvent = function()
-{
-    if (LAppDefine.DEBUG_LOG)
-        console.log("Min scale event.");
-    for (var i = 0; i < this.models.length; i++)
-    {
-        this.models[i].startRandomMotion(LAppDefine.MOTION_GROUP_PINCH_OUT,
-                                         LAppDefine.PRIORITY_NORMAL);
-    }
-}
-
 
 
 LAppLive2DManager.prototype.tapEvent = function(x, y)

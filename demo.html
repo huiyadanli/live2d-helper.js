@@ -37,8 +37,6 @@
     <body>
         
         <p>
-            <button id="btnLoad">Load Model</button>
-
             <button id="btnChange">Change Model</button>
 
             <button id="btnRelease">Release Model</button>
@@ -71,13 +69,16 @@
             <button id="btnPlaySound">Play Sound</button>
         </p>
 
+        <p>
+            <button id="btnZoomIn">Zoom In</button>
+            <button id="btnZoomOut">Zoom Out</button>
+        </p>
+
         <div>
-            <canvas id="glcanvas" width="400" height="500" 
+            <canvas id="glcanvas" width="400" height="600" 
                 style="border:dashed 1px #CCC">
             </canvas>
         </div>
-        
-        <div id="myconsole" style="color:#000">---- Log ----</div>
 
         <!-- Live2D Library -->
         <script src="lib/live2d.min.js"></script>
@@ -98,11 +99,9 @@
 
             window.onload = function() {
                 var path = "assets/models/asuna/asuna_01/asuna_01.model.json";
-                //var path = LAppDefine.MODEL_HARU;
                 live2DHelper.loadModel(path, function(){
                     live2DHelper.startTurnHead();
                     document.getElementById("glcanvas").addEventListener("mousemove", followPointer, false);
-                    //window.addEventListener("mousemove", followPointer, false);
                 });
             };
 
@@ -110,20 +109,22 @@
                 live2DHelper.followPointer(e);
             }
 
-            document.getElementById("btnLoad").onclick = function(){
-                live2DHelper.loadModel(LAppDefine.MODEL_HARU_A);
-            }
-
             var modelNum = 1;
             document.getElementById("btnChange").onclick = function(){
-                modelNum++;
+                modelNum = modelNum % 3 + 1;
+                console.log(modelNum);
                 live2DHelper.releaseAllModel();
                 if(modelNum >= 10) {
-                    live2DHelper.changeModel("assets/models/asuna/asuna_"+modelNum+"/asuna_"+modelNum+".model.json");
+                    live2DHelper.changeModel("assets/models/asuna/asuna_"+modelNum+"/asuna_"+modelNum+".model.json", function(){
+                        live2DHelper.startTurnHead();
+                        document.getElementById("glcanvas").addEventListener("mousemove", followPointer, false);
+                    });
                 } else {
-                    live2DHelper.changeModel("assets/models/asuna/asuna_0"+modelNum+"/asuna_0"+modelNum+".model.json");
+                    live2DHelper.changeModel("assets/models/asuna/asuna_0"+modelNum+"/asuna_0"+modelNum+".model.json", function(){
+                        live2DHelper.startTurnHead();
+                        document.getElementById("glcanvas").addEventListener("mousemove", followPointer, false);
+                    });
                 }
-                console.log(modelNum);
             }
 
             document.getElementById("btnRelease").onclick = function(){
@@ -160,9 +161,17 @@
             }
 
             document.getElementById("btnPlaySound").onclick = function(){
-                live2DHelper.playSound("/assets/sound/2.mp3");
+                live2DHelper.playSoundAJAX("/assets/sound/1.mp3");
+                //live2DHelper.playSound("/assets/sound/1.mp3");
             }
 
+            document.getElementById("btnZoomIn").onclick = function(){
+                live2DHelper.modelScaling(1.1);
+            }
+
+            document.getElementById("btnZoomOut").onclick = function(){
+                live2DHelper.modelScaling(0.9);
+            }
         </script>
     </body>
 </html>

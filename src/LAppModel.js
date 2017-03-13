@@ -407,10 +407,7 @@ LAppModel.prototype.setFadeInFadeOut = function(name, no, priority, motion)
     }
 }
 
-LAppModel.prototype.playSound = function (arraybuffer) {
-    // var audio = this.audioElement || document.createElement("audio");
-    // !this.audioElement && (this.audioElement = audio);
-    // audio.src = path;
+LAppModel.prototype.playSoundAJAX = function (arraybuffer) {
     clearInterval(this.intervalId);
     var thisRef = this;
     var AudioContext = window.AudioContext || window.webkitAudioContext || window.mozAudioContext || window.msAudioContext;
@@ -418,16 +415,13 @@ LAppModel.prototype.playSound = function (arraybuffer) {
         var context = this.audioContext || new AudioContext();
         if (!this.audioContext) {
             this.audioContext = context;
-            //this.audioElementSource = context.createMediaElementSource(audio);
-            //this.bufferSource = context.createBufferSource();
         }
-        if(thisRef.bufferSource != null) {
-            thisRef.bufferSource.stop();
-            thisRef.bufferSource = null;
-            clearInterval(thisRef.intervalId);
-            thisRef.lipSyncValue = 0;
+        if(this.bufferSource != null) {
+            this.bufferSource.stop();
+            this.bufferSource = null;
+            clearInterval(this.intervalId);
+            this.lipSyncValue = 0;
         }
-        //var source = this.audioElementSource;
         context.decodeAudioData(arraybuffer, function (buffer) {
 
             thisRef.bufferSource = context.createBufferSource();
@@ -470,6 +464,57 @@ LAppModel.prototype.playSound = function (arraybuffer) {
         });
     }
 
+}
+
+LAppModel.prototype.playSound = function (path) {
+    var audio = this.audioElement || document.createElement("audio");
+    !this.audioElement && (this.audioElement = audio);
+    audio.src = path;
+    audio.load();
+    clearInterval(this.intervalId);
+    var thisRef = this;
+    var AudioContext = window.AudioContext || window.webkitAudioContext || window.mozAudioContext || window.msAudioContext;
+    if (AudioContext) {
+        var context = this.audioContext || new AudioContext();
+        if (!this.audioContext) {
+            this.audioContext = context;
+            this.audioElementSource = context.createMediaElementSource(audio);
+        }
+        var source = this.audioElementSource;
+
+        var analyser = thisRef.audioAnalyser || context.createAnalyser();
+        !thisRef.audioAnalyser && (thisRef.audioAnalyser = analyser);
+
+        analyser.fftSize = 32;
+        var bufferLength = analyser.frequencyBinCount;
+
+        var cache = [];
+        var lastTime = Date.now();
+        thisRef.intervalId = setInterval(function () {
+            var dataArray = new Uint8Array(bufferLength);
+            analyser.getByteFrequencyData(dataArray);
+            var value = (dataArray[9] + dataArray[10] + dataArray[11]) / 3;
+            if (Date.now() - lastTime < 33) {
+                cache.push(value);
+            } else {
+                var lipValue = cache.length ? cache.reduce(function (previous, current) {
+                    return current += previous;
+                }) / cache.length / 100 : thisRef.lipSyncValue;
+                thisRef.lipSync = true;
+                thisRef.lipSyncValue = lipValue;
+                lastTime = Date.now();
+                cache = [];
+            }
+        }, 0);
+        audio.addEventListener('ended', function () {
+            clearInterval(thisRef.intervalId);
+            this.lipSyncValue = 0;
+        });
+        
+        source.connect(analyser);
+        analyser.connect(context.destination);
+        audio.play();
+    }
 }
 
 LAppModel.prototype.setExpression = function(name)

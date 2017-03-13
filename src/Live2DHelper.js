@@ -1,11 +1,5 @@
 var thisRef = this;
 
-
-window.onerror = function(msg, url, line, col, error) {
-    var errmsg = "file:" + url + "<br>line:" + line + " " + msg;
-    l2dError(errmsg);
-}
-
 function Live2DHelper(setting)
 {
     var defaultSetting = {
@@ -99,7 +93,7 @@ Live2DHelper.prototype.init = function()
     
     this.gl = getWebGLContext(this.canvas);
     if (!this.gl) {
-        l2dError("Failed to create WebGL context.");
+        console.log("Failed to create WebGL context.");
         return;
     }
     
@@ -107,8 +101,6 @@ Live2DHelper.prototype.init = function()
 
     
     this.gl.clearColor(0.0, 0.0, 0.0, 0.0);
-
-    //changeModel();
     
     live2dStartDraw(this);
 }
@@ -338,33 +330,6 @@ Live2DHelper.prototype.transformScreenY = function(deviceY)
     return this.deviceToScreen.transformY(deviceY);
 }
 
-
-
-//---------------------------------------------------------------------------
-function l2dLog(msg) {
-    if(!LAppDefine.DEBUG_LOG) return;
-    
-    var myconsole = document.getElementById("myconsole");
-    myconsole.innerHTML = myconsole.innerHTML + "<br>" + msg;
-    
-    console.log(msg);
-}
-
-
-
-function l2dError(msg)
-{
-    if(!LAppDefine.DEBUG_LOG) return;
-    
-    l2dLog( "<span style='color:red'>" + msg + "</span>");
-    
-    console.error(msg);
-}
-//---------------------------------------------------------------------------
-
-
-
-
 /**
  * load model
  * @param  {string}   path of model
@@ -399,9 +364,9 @@ Live2DHelper.prototype.releaseAllModel = function() {
  * ! this function is recommended when you have only ctreated one model.
  * @param  {string} new model path
  */
-Live2DHelper.prototype.changeModel = function(newModelPath) {
+Live2DHelper.prototype.changeModel = function(newModelPath, callback) {
     this.live2DMgr.reloadFlg = true;
-    this.live2DMgr.changeModel(this.gl, newModelPath);
+    this.live2DMgr.changeModel(this.gl, newModelPath, callback);
 }
 
 Live2DHelper.prototype.setRandomExpression = function(no) {
@@ -427,6 +392,11 @@ Live2DHelper.prototype.startRandomMotion = function(no) {
 Live2DHelper.prototype.startMotion = function(namespace, num, no) {
     if(no == null) no = 0;
     this.live2DMgr.models[no].startMotion(namespace, num, LAppDefine.PRIORITY_FORCE);
+}
+
+Live2DHelper.prototype.playSoundAJAX = function(path, no) {
+    if(no == null) no = 0;
+    this.live2DMgr.playSoundAJAX(path, no);
 }
 
 Live2DHelper.prototype.playSound = function(path, no) {
