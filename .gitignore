@@ -4,3 +4,5 @@ db.json
 *.log
 node_modules/
 gulpfile.js
+*.sublime-project
+*.sublime-workspace
