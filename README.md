@@ -36,8 +36,11 @@ And include the `live2d-helper.min.js` located on the `dist` folder.
 
 ## Thanks
 [avgjs / pixi-live2d](https://github.com/avgjs/pixi-live2d)
+
 [DotSaikyo / Live2D](https://github.com/DotSaikyo/Live2D)
+
 [kakinuma4ko / WebLive2DMurakumo](https://github.com/kakinuma4ko/WebLive2DMurakumo)
+
 
 ## License
 MIT
