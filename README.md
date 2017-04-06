@@ -33,6 +33,8 @@ And include the `live2d-helper.min.js` located on the `dist` folder.
 </script>
 ```
 
+[Demo](https://huiyadanli.github.io/i/live2d-demo/)
+
 ## Methods
 
 ### Model Load/Change/Release
@@ -55,7 +57,7 @@ release all model
     * `callback` - callback
 
 ```
-the model in bottom of stack release,
+release the model in bottom of stack,
 and the new model will push in top of stack.
 
 ! this function is recommended when you have only ctreated one model.

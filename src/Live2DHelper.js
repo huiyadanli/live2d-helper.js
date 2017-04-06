@@ -359,7 +359,7 @@ Live2DHelper.prototype.releaseAllModel = function() {
 }
 
 /**
- * the model in bottom of stack release,
+ * release the model in bottom of stack ,
  * and the new model will push in top of stack.
  * ! this function is recommended when you have only ctreated one model.
  * @param  {string} new model path
