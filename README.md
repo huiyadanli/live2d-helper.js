@@ -35,6 +35,8 @@ And include the `live2d-helper.min.js` located on the `dist` folder.
 
 ## Methods
 
+### Model Load/Change/Release
+
 * `loadModel(modelPath, callback)`
     * `modelPath` - path of model json data
     * `callback` - callback
@@ -58,6 +60,8 @@ and the new model will push in top of stack.
 
 ! this function is recommended when you have only ctreated one model.
 ```
+
+### Expression and Motion
 
 * `setRandomExpression(no)`
     * `no` - model index, default: 0
@@ -93,6 +97,8 @@ set model expression by name
     * `num` - motion index
     * `no` - model index, default: 0
 
+### Model Speak
+
 * `playSound(path, no)`
     * `path` - sound path
     * `no` - model index, default: 0
@@ -110,6 +116,8 @@ it only work once in FireFox.
 Play sound use AJAX and Web Audio API.
 It can work in both Chrome and Firefox, the sound will be played after download.
 ```
+
+### Control Model Head
 
 * `startTurnHead(no)`
     * `no` - model index, default: 0
