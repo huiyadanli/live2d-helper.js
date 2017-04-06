@@ -398,6 +398,11 @@ Live2DHelper.prototype.setExpression = function(name, no) {
     this.live2DMgr.models[no].setExpression(name);
 }
 
+/**
+ * start random motion
+ * @param  {[type]} no [description]
+ * @return {[type]}    [description]
+ */
 Live2DHelper.prototype.startRandomMotion = function(no) {
     if(no == null) no = 0;
     this.live2DMgr.models[no].setRandomExpression();

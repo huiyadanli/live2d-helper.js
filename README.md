@@ -40,7 +40,7 @@ And include the `live2d-helper.min.js` located on the `dist` folder.
     * `callback` - callback
 
 * `releaseModel(no)`
-    * `no` - model index
+    * `no` - model index, default: 0
 
 * `releaseAllModel()` 
 
@@ -98,8 +98,8 @@ set model expression by name
     * `no` - model index, default: 0
 
 ```
-play sound use Audio DOM
-it only works once in FireFox
+Play sound use Audio DOM,
+it only work once in FireFox.
 ```
 
 * `playSoundAJAX(path, no)`
@@ -107,9 +107,22 @@ it only works once in FireFox
     * `no` - model index, default: 0
 
 ```
-play sound use AJAX and Web Audio API
-it can work in both Chrome and Firefox, but the sound must be played after download
+Play sound use AJAX and Web Audio API.
+It can work in both Chrome and Firefox, the sound will be played after download.
 ```
+
+* `startTurnHead(no)`
+    * `no` - model index, default: 0
+
+* `stopTurnHead(no)`
+    * `no` - model index, default: 0
+
+* `followPointer(event)`
+    * `event` - mouse event
+
+* `viewPointer(x, y)`
+    * `x` - coordinate x
+    * `y` - coordinate y
 
 ## Thanks
 [avgjs / pixi-live2d](https://github.com/avgjs/pixi-live2d)
