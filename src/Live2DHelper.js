@@ -369,16 +369,30 @@ Live2DHelper.prototype.changeModel = function(newModelPath, callback) {
     this.live2DMgr.changeModel(this.gl, newModelPath, callback);
 }
 
+/**
+ * set random expression
+ * @param {int} no   model index, can be empty
+ */
 Live2DHelper.prototype.setRandomExpression = function(no) {
     if(no == null) no = 0;
     this.live2DMgr.models[no].setRandomExpression();
 }
 
-Live2DHelper.prototype.gerExpressions = function(no) {
+/**
+ * return all expression names
+ * @param  {int} no model index, can be empty
+ * @return {array}    expression names array
+ */
+Live2DHelper.prototype.getExpressions = function(no) {
     if(no == null) no = 0;
     return this.live2DMgr.models[no].expressions;
 }
 
+/**
+ * set model expression by name
+ * @param {string} name expression name
+ * @param {int} no   model index, can be empty
+ */
 Live2DHelper.prototype.setExpression = function(name, no) {
     if(no == null) no = 0;
     this.live2DMgr.models[no].setExpression(name);

@@ -136,14 +136,14 @@
 
             document.getElementById("btnLoadExpressions").onclick = function(){
                  document.getElementById("expressions").innerHTML = '';
-                for (var name in live2DHelper.gerExpressions()) {
+                for (var name in live2DHelper.getExpressions()) {
                     var button = document.createElement("input");
                     button.setAttribute("type","button");
                     button.setAttribute("value",name);
                     button.setAttribute("id",name);
                     document.getElementById("expressions").appendChild(button);
                 }
-                for (var name in live2DHelper.gerExpressions()) {
+                for (var name in live2DHelper.getExpressions()) {
                     (function(name){
                         document.getElementById(name).onclick = function(){
                             live2DHelper.setExpression(name);
@@ -160,8 +160,8 @@
             }
 
             document.getElementById("btnPlaySound").onclick = function(){
-                live2DHelper.playSoundAJAX("/assets/sound/1.mp3");
-                //live2DHelper.playSound("/assets/sound/1.mp3");
+                live2DHelper.playSoundAJAX("assets/sound/1.mp3");
+                //live2DHelper.playSound("assets/sound/1.mp3");
             }
 
             document.getElementById("btnZoomIn").onclick = function(){

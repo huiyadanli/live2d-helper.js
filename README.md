@@ -15,13 +15,12 @@ And include the `live2d-helper.min.js` located on the `dist` folder.
 <script src="live2d-helper.min.js"></script>
 ```
 
-## Usage
+## Example
 ```html
-<script src="live2d.min.js"></script>
-<script src="live2d-helper.min.js"></script>
-
 <canvas id="glcanvas" width="400" height="600"></canvas>
 
+<script src="live2d.min.js"></script>
+<script src="live2d-helper.min.js"></script>
 <script type="text/javascript">
     var live2DHelper = new Live2DHelper({canvas: 'glcanvas'});
     
@@ -32,6 +31,84 @@ And include the `live2d-helper.min.js` located on the `dist` folder.
         });
     };
 </script>
+```
+
+## Methods
+
+* `loadModel(modelPath, callback)`
+    * `modelPath` - path of model json data
+    * `callback` - callback
+
+* `releaseModel(no)`
+    * `no` - model index
+
+* `releaseAllModel()` 
+
+```
+release all model
+```
+
+* `changeModel(newModelPath, callback)`
+    * `newModelPath` - new model json data path
+    * `callback` - callback
+
+```
+the model in bottom of stack release,
+and the new model will push in top of stack.
+
+! this function is recommended when you have only ctreated one model.
+```
+
+* `setRandomExpression(no)`
+    * `no` - model index, default: 0
+
+```
+set random expression
+```
+
+* `getExpressions(no)`
+    * `no` - model index, default: 0
+
+```
+return all expression names.
+iterate: 
+for (var name in live2DHelper.getExpressions()) {
+  // ...
+}
+```
+
+* `setExpression(name, no)`
+    * `name` - expression name
+    * `no` - model index, default: 0
+
+```
+set model expression by name
+```
+
+* `startRandomMotion(no)`
+    * `no` - model index, default: 0
+
+* `startMotion(namespace, num, no)`
+    * `namespace` - motion namespace
+    * `num` - motion index
+    * `no` - model index, default: 0
+
+* `playSound(path, no)`
+    * `path` - sound path
+    * `no` - model index, default: 0
+
+```
+play sound use Audio DOM
+it only works once in FireFox
+```
+
+* `playSoundAJAX(path, no)`
+    * `path` - sound path
+    * `no` - model index, default: 0
+
+```
+play sound use AJAX and Web Audio API
+it can work in both Chrome and Firefox, but the sound must be played after download
 ```
 
 ## Thanks
