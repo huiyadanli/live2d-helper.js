@@ -3,6 +3,8 @@ Display Live2D models on web page.
 
 Actually, it's a simple package for the Live2D official demo.
 
+![Screenshot](https://raw.githubusercontent.com/huiyadanli/live2d-helper.js/master/assets/screenshot/asuna.gif)
+
 ## Setup
 First, import scripts into your page.
 
