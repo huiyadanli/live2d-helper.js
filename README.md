@@ -108,17 +108,15 @@ set model expression by name
     * `no` - model index, default: 0
 
 ```
-Play sound use Audio DOM,
-it only work once in FireFox.
+Play sound use Audio DOM.
 ```
 
-* `playSoundAJAX(path, no)`
+<del>* `playSoundAJAX(path, no)`</del>
     * `path` - sound path
     * `no` - model index, default: 0
 
 ```
-Play sound use AJAX and Web Audio API.
-It can work in both Chrome and Firefox, the sound will be played after download.
+Play sound use AJAX and Web Audio API.(Not recommended)
 ```
 
 ### Control Model Head

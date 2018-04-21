@@ -1,7 +1,7 @@
 var LAppDefine = {
     
     
-    DEBUG_LOG : true,
+    DEBUG_LOG : false,
     DEBUG_MOUSE_LOG : false, 
     // DEBUG_DRAW_HIT_AREA : false, 
     // DEBUG_DRAW_ALPHA_MODEL : false, 

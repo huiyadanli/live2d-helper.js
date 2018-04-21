@@ -19,12 +19,6 @@
 		{"name":"F_ANGRY","file":"exp/F_ANGRY.exp.json"},
 		{"name":"F_SLEEP","file":"exp/F_SLEEP.exp.json"}
 	],
-	"layout":
-	{
-		"center_x":0,
-		"y":1.5,
-		"width":2.9
-	},
 	"hit_areas":
 	[
 		{"name":"chest", "id":"D_REF.PT_CHEST"},

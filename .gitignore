@@ -6,3 +6,10 @@ node_modules/
 gulpfile.js
 *.sublime-project
 *.sublime-workspace
+
+# model
+assets/models/asuna_all/
+
+# script
+*.bat
+*.sh

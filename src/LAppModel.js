@@ -446,7 +446,7 @@ LAppModel.prototype.playSoundAJAX = function (arraybuffer) {
                 } else {
                     var lipValue = cache.length ? cache.reduce(function (previous, current) {
                         return current += previous;
-                    }) / cache.length / 100 : thisRef.lipSyncValue;
+                    }) / cache.length / 25 : thisRef.lipSyncValue;
                     thisRef.lipSync = true;
                     thisRef.lipSyncValue = lipValue;
                     lastTime = Date.now();

@@ -405,7 +405,7 @@ Live2DHelper.prototype.setExpression = function(name, no) {
  */
 Live2DHelper.prototype.startRandomMotion = function(no) {
     if(no == null) no = 0;
-    this.live2DMgr.models[no].setRandomExpression();
+    //this.live2DMgr.models[no].startRandomMotion();
 }
 
 Live2DHelper.prototype.startMotion = function(namespace, num, no) {
