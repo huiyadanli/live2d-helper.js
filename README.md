@@ -108,16 +108,7 @@ set model expression by name
     * `no` - model index, default: 0
 
 ```
-Play sound use Audio DOM.
-```
-
-<del>* `playSoundAJAX(path, no)`</del>
-    * `path` - sound path
-    * `no` - model index, default: 0
-
-```
-Play sound use AJAX and Web Audio API.(Not recommended)
-```
+Play sound.
 
 ### Control Model Head
 
